@@ -3,378 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>رسالة خاصة إلى رتاج</title>
-    <!-- خط Amiri للرسالة -->
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <title>موقع رتاج</title>
+    <!-- استدعاء خط عربي مميز ورقعة/ديواني للمخطوطة -->
+    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --burgundy: #58111A;
-            --dark-burgundy: #380A10;
-            --gold: #D4AF37;
-            --parchment: #FDF6E2;
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
-        body {
-            background: radial-gradient(circle, #2b080d 0%, #120305 100%);
-            font-family: 'Amiri', serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow-x: hidden;
-            color: var(--gold);
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Cairo', sans-serif;
+            overflow: hidden;
         }
 
-        /* خلفية تساقط الجزيئات اللامعة */
-        #particles-canvas {
+        /* خلفية الموقع باستخدام الصورة المرفقة */
+        .background-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        /* زر التحكم بالصوت */
-        .audio-control {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 100;
-            background: rgba(212, 175, 55, 0.2);
-            border: 1px solid var(--gold);
-            color: var(--gold);
-            padding: 10px 15px;
-            border-radius: 50px;
-            cursor: pointer;
-            backdrop-filter: blur(5px);
-            transition: all 0.3s;
-        }
-
-        .audio-control:hover {
-            background: var(--gold);
-            color: var(--burgundy);
-        }
-
-        /* حاوية الظرف */
-        .envelope-wrapper {
-            position: relative;
-            width: 320px;
-            height: 220px;
-            background-color: var(--burgundy);
-            border-radius: 10px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-            cursor: pointer;
-            z-index: 10;
-            transition: transform 0.5s ease;
-            /* نقش المخمل البارز */
-            background-image: radial-gradient(var(--dark-burgundy) 15%, transparent 16%);
-            background-size: 15px 15px;
-        }
-
-        /* أغطية الظرف */
-        .flap {
-            position: absolute;
-            width: 0;
-            height: 0;
-            border-style: solid;
-            z-index: 3;
-            transition: all 0.8s ease-in-out;
-        }
-
-        .flap.top {
-            top: 0;
-            border-width: 120px 160px 0 160px;
-            border-color: #4a0e16 transparent transparent transparent;
-            transform-origin: top;
-        }
-
-        .flap.bottom {
-            bottom: 0;
-            border-width: 0 160px 100px 160px;
-            border-color: transparent transparent #420c13 transparent;
-        }
-
-        /* الختم الشمعي */
-        .wax-seal {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(1);
-            width: 65px;
-            height: 65px;
-            background: #F8F5E6;
-            border-radius: 50%;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 0 8px rgba(0,0,0,0.2);
+            /* استبدل '1000106204.jpg' بمسار صورة الخلفية لديك */
+            background-image: url('1000106204.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 4;
-            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            flex-direction: column;
         }
 
-        .wax-seal::after {
-            content: '🌸';
-            font-size: 28px;
-        }
-
-        /* أنيميشن فتح الظرف */
-        .envelope-wrapper.open .wax-seal {
-            transform: translate(-50%, -50%) scale(0) rotate(180deg);
-            opacity: 0;
-        }
-
-        .envelope-wrapper.open .flap.top {
-            transform: rotateX(180deg);
+        /* طبقة شفافة ناعمة لزيادة التباين */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 10, 30, 0.25);
             z-index: 1;
         }
 
-        .envelope-wrapper.open {
-            transform: translateY(150px) scale(0.8);
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* ورقة الرسالة */
-        .letter {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.3);
-            width: 90%;
-            max-width: 650px;
-            max-height: 85vh;
-            background: var(--parchment);
-            background-image: repeating-linear-gradient(rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 30px);
-            border: 2px solid var(--gold);
-            border-radius: 8px;
-            padding: 40px 30px;
-            box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
-            opacity: 0;
-            z-index: 20;
-            overflow-y: auto;
-            transition: all 1s ease 0.5s;
-            pointer-events: none;
-        }
-
-        .letter.show {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        /* محتوى الرسالة */
-        .letter-header {
+        /* محتوى الموقع */
+        .content {
+            position: relative;
+            z-index: 2;
             text-align: center;
-            font-size: 2.2rem;
-            color: var(--burgundy);
-            border-bottom: 2px solid var(--gold);
-            padding-bottom: 15px;
-            margin-bottom: 30px;
-            font-weight: bold;
+            user-select: none;
         }
 
-        .fade-in-text {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.8s ease;
-            color: #3a220f;
-            font-size: 1.3rem;
-            line-height: 2.2;
-            text-align: center;
-            margin-bottom: 25px;
+        /* حاوية المخطوطة الكلية */
+        .calligraphy-title {
+            font-family: 'Aref Ruqaa', serif;
+            font-size: 8rem;
+            display: flex;
+            direction: rtl;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.4));
         }
 
-        .fade-in-text.visible {
-            opacity: 1;
-            transform: translateY(0);
+        /* نمط الأحرف الافتراضي (تدرج الأزرق والسماوي) */
+        .char {
+            display: inline-block;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: linear-gradient(180deg, #89CFF0 0%, #0077BE 50%, #002B5B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            padding: 0 5px;
         }
 
-        .poem {
-            color: var(--burgundy);
-            font-size: 1.4rem;
-            font-weight: bold;
-            margin: 20px 0;
-            text-align: center;
+        /* تحويم الماوس لزيادة البروز بشكل خفيف */
+        .char:hover {
+            transform: translateY(-8px) scale(1.05);
         }
 
-        .photo-frame {
-            width: 100%;
-            max-width: 300px;
-            margin: 20px auto;
-            border: 4px solid var(--gold);
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            transition: transform 0.5s ease;
+        /* التنسيق عند النقر على الحرف (ذهبي مشع وبروز عالي) */
+        .char.active {
+            background: linear-gradient(180deg, #FFF7AD 0%, #FFAA00 50%, #B37400 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transform: translateY(-20px) scale(1.25);
+            filter: drop-shadow(0 0 20px #FFD700) 
+                    drop-shadow(0 0 35px rgba(255, 215, 0, 0.8)) 
+                    drop-shadow(0 0 50px rgba(255, 170, 0, 0.6));
+            animation: pulseGlow 1.5s infinite alternate;
         }
 
-        .photo-frame:hover {
-            transform: scale(1.05) rotate(2deg);
+        /* تأثير نبض وإشعاع للون الذهبي */
+        @keyframes pulseGlow {
+            0% {
+                filter: drop-shadow(0 0 15px #FFD700) 
+                        drop-shadow(0 0 30px rgba(255, 215, 0, 0.8));
+            }
+            100% {
+                filter: drop-shadow(0 0 25px #FFD700) 
+                        drop-shadow(0 0 45px rgba(255, 215, 0, 1)) 
+                        drop-shadow(0 0 60px rgba(255, 170, 0, 0.8));
+            }
         }
 
-        .photo-frame img {
-            width: 100%;
-            display: block;
+        /* نص توضيحي في الأسفل */
+        .subtitle {
+            margin-top: 30px;
+            color: #E0F2FE;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+            opacity: 0.9;
+        }
+
+        /* التجاوب مع شاشات الهواتف */
+        @media (max-width: 768px) {
+            .calligraphy-title {
+                font-size: 4.5rem;
+                gap: 5px;
+            }
+            .subtitle {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- موسيقى خلفية (يمكنك تغيير الرابط برابط صوتي مباشر) -->
-    <audio id="bg-music" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-    </audio>
-
-    <button class="audio-control" onclick="toggleAudio()" id="audio-btn">🔊 الصوت</button>
-
-    <canvas id="particles-canvas"></canvas>
-
-    <!-- الظرف الرئيسي -->
-    <div class="envelope-wrapper" id="envelope" onclick="openEnvelope()">
-        <div class="flap top"></div>
-        <div class="wax-seal"></div>
-        <div class="flap bottom"></div>
-    </div>
-
-    <!-- الرسالة الداخلية -->
-    <div class="letter" id="letter">
-        <div class="letter-header">إلى الجميلة: رتاج ✨</div>
-        
-        <p class="fade-in-text">
-            إلى من تُزهر الأيامُ بقربها، وتشرقُ البسمةُ بحضورها...
-        </p>
-
-        <div class="poem fade-in-text">
-            "يَا مَنْ حَوَتْ كُلَّ الجَمَالِ بِحُسْنِهَا<br>
-            وَأَضَاءَتْ الأَيَّامَ حِينَ أَقْبَلَتْ رِتَاجُ"
+    <div class="background-container">
+        <div class="overlay"></div>
+        <div class="content">
+            <!-- المخطوطة مقسمة إلى حروف منفصلة -->
+            <div class="calligraphy-title" id="titleContainer">
+                <span class="char">ر</span>
+                <span class="char">ت</span>
+                <span class="char">ا</span>
+                <span class="char">ج</span>
+            </div>
+            <p class="subtitle">اضغط على أي حرف ليتلون بالذهبي المشع</p>
         </div>
-
-        <p class="fade-in-text">
-            كتبتُ لكِ هذه الكلمات لتخبركِ كم أنتِ استثنائية، وكم يكتمل هذا العالم بوجودكِ.
-        </p>
-
-        <!-- صورة مع تأثير Hover -->
-        <div class="photo-frame fade-in-text">
-            <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600" alt="ورود زهرية">
-        </div>
-
-        <p class="fade-in-text" style="color: var(--burgundy); font-weight: bold;">
-            دمتِ شيئاً جميلاً لا ينتهي ❤️
-        </p>
     </div>
 
     <script>
-        // 1. فتح الظرف وتشغيل الموسيقى
-        function openEnvelope() {
-            document.getElementById('envelope').classList.add('open');
-            document.getElementById('letter').classList.add('show');
-            
-            // تشغيل الصوت عند الضغط
-            const audio = document.getElementById('bg-music');
-            audio.play().catch(() => console.log("تفاعل المستخدم مطلوب للتشغيل"));
+        // تحديد جميع الحروف
+        const chars = document.querySelectorAll('.char');
 
-            // تفعيل أنيميشن النصوص بالتدرج
-            setTimeout(revealTexts, 800);
-        }
-
-        // 2. التحكم بالصوت
-        function toggleAudio() {
-            const audio = document.getElementById('bg-music');
-            const btn = document.getElementById('audio-btn');
-            if (audio.paused) {
-                audio.play();
-                btn.innerHTML = "🔊 الصوت";
-            } else {
-                audio.pause();
-                btn.innerHTML = "🔇 مكتوم";
-            }
-        }
-
-        // 3. ظهور النصوص بالتدريج عند التمرير/الفتح
-        function revealTexts() {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
+        // إضافة حدث النقر على كل حرف
+        chars.forEach(char => {
+            char.addEventListener('click', () => {
+                // إلغاء التفعيل عن باقي الحروف (ليكون الحرف المنقور عليه فقط هو المفعل)
+                chars.forEach(c => {
+                    if (c !== char) {
+                        c.classList.remove('active');
                     }
                 });
-            }, { threshold: 0.2 });
 
-            document.querySelectorAll('.fade-in-text').forEach(el => observer.observe(el));
-        }
-
-        // 4. خلفية تفاعلية للجزيئات والماوس
-        const canvas = document.getElementById('particles-canvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 3 + 1;
-                this.speedX = Math.random() * 1 - 0.5;
-                this.speedY = Math.random() * 1 + 0.5;
-                this.color = 'rgba(212, 175, 55, ' + (Math.random() * 0.5 + 0.2) + ')';
-            }
-            update(mouseX, mouseY) {
-                this.y += this.speedY;
-                this.x += this.speedX;
-                if (this.y > canvas.height) this.y = 0;
-                if (this.x > canvas.width) this.x = 0;
-
-                // التفاعل مع الماوس
-                if (mouseX && mouseY) {
-                    let dx = mouseX - this.x;
-                    let dy = mouseY - this.y;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < 100) {
-                        this.x -= dx * 0.03;
-                        this.y -= dy * 0.03;
-                    }
-                }
-            }
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        for (let i = 0; i < 60; i++) particles.push(new Particle());
-
-        let mouse = { x: null, y: null };
-        window.addEventListener('mousemove', (e) => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
-        });
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                p.update(mouse.x, mouse.y);
-                p.draw();
+                // تبديل حالة التفعيل للحرف الضغوط عليه
+                char.classList.toggle('active');
             });
-            requestAnimationFrame(animate);
-        }
-        animate();
+        });
     </script>
 </body>
 </html>
-
